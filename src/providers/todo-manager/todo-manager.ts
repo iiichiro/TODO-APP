@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 import { Storage } from '../../../node_modules/@ionic/storage';
 
 
+export function getNow(): Date {
+  // タイムゾーンの時差を取得
+  let tz = (new Date()).getTimezoneOffset() * 60000;
+  // 現在時刻から時差を引いた値をISO形式の文字列に変換. その後、日付以降を削除.
+  return new Date(new Date(Date.now() - tz).toISOString().replace(/T.*$/, ''));
+}
+
 export class Todo {
   constructor(public id: number, public task: string,
               public limit: string, public memo: string) {
@@ -10,11 +17,7 @@ export class Todo {
 
   public isExpired() {
     let limit = new Date(this.limit);
-    // タイムゾーンの時差を取得
-    let tz = (new Date()).getTimezoneOffset() * 60000;
-    // 現在時刻から時差を引いた値をISO形式の文字列に変換. その後、日付以降を削除.
-    let now = new Date(new Date(Date.now() - tz).toISOString().replace(/T.*$/, ''));
-    return (now.getTime() - limit.getTime()) > 0
+    return (getNow().getTime() - limit.getTime()) > 0
   }
 
   public toString(): string {

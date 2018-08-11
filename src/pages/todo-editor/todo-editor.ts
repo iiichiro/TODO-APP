@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { Todo, TodoManager } from '../../providers/todo-manager/todo-manager';
+import { Todo, TodoManager, getNow } from '../../providers/todo-manager/todo-manager';
 
 /**
  * Generated class for the TodoEditorPage page.
@@ -21,10 +21,8 @@ export class TodoEditorPage {
     this.todo = Object.assign({}, this.navParams.get('target')) as Todo;
 
     if (!this.todo.limit) {
-      // タイムゾーンの時差を取得
-      let tz = (new Date()).getTimezoneOffset() * 60000;
       // 現在時刻から時差を引いた値をISO形式の文字列に変換. その後、日付以降を削除.
-      this.todo.limit = new Date(Date.now() - tz).toISOString().replace(/T.*$/, '');
+      this.todo.limit = getNow().toISOString().replace(/T.*$/, '');
     }
   }
 
