@@ -21,15 +21,16 @@
 <ion-content padding>
   <ion-list>
     <ion-item-sliding *ngFor="let todo of todoList">
-      <ion-item no-line detail-push (tap)="editTodo(todo)">
-        <ion-label>{{todo.task}}</ion-label>
-        <div item-end>
+      <ion-item [color]="todo.isExpired()?'limited':'light'" no-padding no-line detail-push (tap)="editTodo(todo)">
+        <h2 padding-left>{{todo.task}}</h2>
+        <p padding-left>
           <ion-note>期限: </ion-note><span>{{todo.limit}}</span>
-        </div>
+        </p>
       </ion-item>
       <ion-item-options side="right">
         <button ion-button color="danger" (click)="deleteTodo(todo)">削除</button>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
+  <button ion-button (click)="print(this.todoList)">CLICK ME!</button>
 </ion-content>

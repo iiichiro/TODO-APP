@@ -8,7 +8,16 @@ export class Todo {
     console.log('create todo!');
   }
 
-  toString(): string {
+  public isExpired() {
+    let limit = new Date(this.limit);
+    // タイムゾーンの時差を取得
+    let tz = (new Date()).getTimezoneOffset() * 60000;
+    // 現在時刻から時差を引いた値をISO形式の文字列に変換. その後、日付以降を削除.
+    let now = new Date(new Date(Date.now() - tz).toISOString().replace(/T.*$/, ''));
+    return (now.getTime() - limit.getTime()) > 0
+  }
+
+  public toString(): string {
     return 'Todo' + this.id + '(' + this.task + ')'
   }
 }
@@ -29,7 +38,8 @@ export class TodoManager {
     this.storage.keys().then(keys => {
       for (let key of keys) {
         this.storage.get(key).then(data => {
-          todoList.push(data as Todo);
+          data = data as Todo;
+          todoList.push(new Todo(data.id, data.task, data.limit, data.memo));
         });
       }
     });
