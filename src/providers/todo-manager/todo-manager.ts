@@ -71,12 +71,23 @@ export class TodoManager {
 
   load(todoList: Array<Todo>): void {
     this.storage.keys().then(keys => {
+      let promiseList: Promise<void>[] = [];
       for (let key of keys) {
-        this.storage.get(key).then(data => {
+        promiseList.push(this.storage.get(key).then(data => {
           data = data as Todo;
           todoList.push(new Todo(data.id, data.task, data.limit, data.memo, data.state));
-        });
+        }));
       }
+      Promise.all(promiseList).then(() => {
+        todoList.sort((a, b) => {
+          let res = b.state.value - a.state.value;
+          if (res === 0) {
+            return new Date(a.limit).getTime() - new Date(b.limit).getTime();
+          } else {
+            return res;
+          }
+        });
+      });
     });
   }
 

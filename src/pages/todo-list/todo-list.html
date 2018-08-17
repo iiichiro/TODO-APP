@@ -19,9 +19,9 @@
 
 
 <ion-content padding>
-  <ion-list>
+  <ion-list *ngIf="todoList">
     <ion-item-sliding *ngFor="let todo of todoList">
-      <ion-item [color]="todo.state.color" no-padding no-lines detail-push (tap)="editTodo(todo)">
+      <ion-item [color]="todo.state.color" no-padding detail-push (tap)="editTodo(todo)">
         <h2 padding-left>{{todo.task}}</h2>
         <p padding-left>
           <ion-note>期限: </ion-note><span>{{todo.limit}}</span>
