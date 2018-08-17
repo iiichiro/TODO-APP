@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { Todo, TodoManager, getNow } from '../../providers/todo-manager/todo-manager';
+import { Todo, TodoManager, getNow, State } from '../../providers/todo-manager/todo-manager';
 
 /**
  * Generated class for the TodoEditorPage page.
@@ -18,11 +18,44 @@ export class TodoEditorPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public todoManager: TodoManager) {
-    this.todo = Object.assign({}, this.navParams.get('target')) as Todo;
+    let todoTmp = Object.assign({}, this.navParams.get('target')) as Todo;
+    this.todo = new Todo(
+      todoTmp.id, todoTmp.task, todoTmp.limit, todoTmp.memo, todoTmp.state
+    );
 
     if (!this.todo.limit) {
       // 現在時刻から時差を引いた値をISO形式の文字列に変換. その後、日付以降を削除.
       this.todo.limit = getNow().toISOString().replace(/T.*$/, '');
+    }
+  }
+
+  onChangeOfLimit(newLimit: string) {
+    this.todo.limit = newLimit;
+    let isLimited = this.todo.isLimited();
+    if (isLimited) {
+      this.todo.state = this.todoManager.status.limited;
+    } else if (!isLimited && this.todo.state === this.todoManager.status.limited) {
+      // 期限内、かつ、状態が期限切れであれば、状態を通常にする
+      this.todo.state = this.todoManager.status.normal;
+    }
+  }
+
+  onChangeOfState(newStateName: string) {
+    for (let key in this.todoManager.status) {
+      if (newStateName === this.todoManager.status[key].name) {
+        this.todo.state = this.todoManager.status[key];
+        break;
+      }
+    }
+  }
+
+  isDisabledToState(state: State) {
+    if (state === this.todoManager.status.onHold) {
+      return false;
+    } else if (state === this.todoManager.status.limited) {
+      return true;
+    } else {
+      return this.todo.isExpired();
     }
   }
 
