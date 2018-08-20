@@ -16,6 +16,10 @@ import { Todo, TodoManager, getNow, State } from '../../providers/todo-manager/t
 export class TodoEditorPage {
   todo: Todo;
 
+  readonly minLimit: number;
+  readonly maxLimit: number;
+  readonly limitRange: number = 100;
+
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public todoManager: TodoManager) {
     let todoTmp = Object.assign({}, this.navParams.get('target')) as Todo;
@@ -23,9 +27,14 @@ export class TodoEditorPage {
       todoTmp.id, todoTmp.task, todoTmp.limit, todoTmp.memo, todoTmp.state
     );
 
+    // Limitの下限、上限用変数を設定
+    let now = getNow();
+    this.minLimit = now.getFullYear();
+    this.maxLimit = this.minLimit + this.limitRange;
+
     if (!this.todo.limit) {
       // 現在時刻から時差を引いた値をISO形式の文字列に変換. その後、日付以降を削除.
-      this.todo.limit = getNow().toISOString().replace(/T.*$/, '');
+      this.todo.limit = now.toISOString().replace(/T.*$/, '');
     }
   }
 
@@ -65,6 +74,15 @@ export class TodoEditorPage {
       console.log('Done!');
       this.navCtrl.pop();
     });
+  }
+
+  adjust(event) {
+    let target = event.target;
+    target.rows = this.getLines(this.todo.memo) + 1;
+  }
+
+  getLines(text: string, sep: string = '\n'): number {
+    return text.split(sep).length;
   }
 
   ionViewDidLoad() {
