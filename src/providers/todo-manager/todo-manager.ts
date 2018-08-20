@@ -19,7 +19,7 @@ export function getNow(): Date {
 
 export class Todo {
   constructor(public id: number, public task: string,
-              public limit: string, public memo: string, public state: State) {
+              public limit: string, public memo: string, public state: State=STATUS.normal) {
     this.state = this.isLimited() ? STATUS.limited : this.state;
   }
 

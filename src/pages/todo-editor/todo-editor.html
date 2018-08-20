@@ -41,13 +41,5 @@
       <ion-textarea [attr.rows]="getLines(todo.memo) + 1"
       (input)="adjust($event)" [(ngModel)]="todo.memo"></ion-textarea>
     </ion-item>
-    <ion-item no-lines radio-group [ngModel]="todo.state.name" (ngModelChange)="onChangeOfState($event)">
-      <ion-label stacked>State</ion-label>
-      <ion-item *ngFor="let state of todoManager.statusList"
-       item-content color="{{state.color}}">
-        <ion-label>{{state.name}}</ion-label>
-        <ion-radio [disabled]="isDisabledToState(state)" value="{{state.name}}"></ion-radio>
-      </ion-item>
-    </ion-item>
   </ion-list>
 </ion-content>
